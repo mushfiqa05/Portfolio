@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mushfiqa Shaikh — Embedded Systems & IoT Portfolio</title>
+<meta name="description" content="Portfolio of Mushfiqa Shaikh, B.Tech CSE (IoT) student building ESP32 firmware, sensor systems and cloud-connected dashboards.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{--ivory:#F8F5ED;--jade:#24594A;--sage:#DCE8D9;--graphite:#202722;--char:#151B18;--mint:#9BF5B5;--butter:#F2D77B;--coral:#E98B72;--text:#252B27;--white:#FFFEFA;
+--bg:var(--ivory);--card:var(--white);--tx:var(--text);--mut:#5b665f;--line:rgba(37,43,39,.16);--acc:var(--jade);--chip:var(--sage);
+--d:'Space Grotesk',system-ui,sans-serif;--b:'Inter',system-ui,sans-serif;--m:'IBM Plex Mono',ui-monospace,monospace;--ease:cubic-bezier(.2,.7,.2,1)}
+@media(prefers-color-scheme:dark){:root{--bg:#151B18;--card:#202722;--tx:#F1EEE3;--mut:#a9b5ad;--line:rgba(241,238,227,.18);--acc:var(--mint);--chip:#2a3a32}}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth;scroll-padding-top:calc(72px + env(safe-area-inset-top,0px));-webkit-text-size-adjust:100%}
+body{font:400 1.0625rem/1.6 var(--b);background:var(--bg);color:var(--tx);padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);overflow-x:hidden}
+a{color:inherit}img,svg{max-width:100%}
+:focus-visible{outline:3px solid var(--coral);outline-offset:3px;border-radius:4px}
+.wrap{width:min(1180px,100% - 2.5rem);margin-inline:auto}
+.mono{font-family:var(--m);font-size:.78rem;letter-spacing:.04em;color:var(--mut)}
+h1,h2,h3{font-family:var(--d);line-height:1.04;letter-spacing:-.02em}
+h2{font-size:clamp(2rem,4.6vw,3.4rem);max-width:18ch;margin:.5rem 0 1.4rem}
+h3{font-size:1.5rem;letter-spacing:-.01em}
+section{padding:clamp(4rem,9vw,7.5rem) 0}
+.dark{background:var(--graphite);color:#F1EEE3;--mut:#a9b5ad;--line:rgba(241,238,227,.18);--acc:var(--mint);--card:var(--char);--tx:#F1EEE3;--chip:#2a3a32}
+.btn{display:inline-flex;align-items:center;gap:.5rem;min-height:46px;padding:.7rem 1.3rem;border-radius:999px;font:600 .95rem var(--b);text-decoration:none;border:1.5px solid var(--jade);background:var(--jade);color:#fff;transition:transform .2s var(--ease),background .2s,color .2s}
+.btn:hover{transform:translateY(-2px);background:var(--char)}.btn:active{transform:translateY(0)}
+.btn.ghost{background:transparent;color:var(--tx);border-color:var(--line)}
+.btn.ghost:hover{border-color:var(--coral);background:transparent;color:var(--coral)}
+.dark .btn{background:var(--mint);color:var(--char);border-color:var(--mint)}.dark .btn:hover{background:var(--butter)}
+.dark .btn.ghost{background:transparent;color:#F1EEE3;border-color:var(--line)}
+.chip{display:inline-block;font:500 .75rem var(--m);padding:.28rem .6rem;border-radius:6px;background:var(--chip);color:var(--tx)}
+.status{font:500 .74rem var(--m);padding:.28rem .6rem;border:1px solid currentColor;border-radius:6px;display:inline-block}
+.s-done{color:var(--acc)}.s-proto{color:#9a7a14}.s-plan{color:var(--coral)}
+.dark .s-proto{color:var(--butter)}
+@media(prefers-color-scheme:dark){.s-proto{color:var(--butter)}}
+/* nav */
+header{position:fixed;inset:0 0 auto;z-index:50;padding-top:env(safe-area-inset-top,0px);transition:background .3s,border-color .3s;border-bottom:1px solid transparent}
+header.solid{background:rgba(21,27,24,.94);border-color:rgba(241,238,227,.14)}
+.bar{display:flex;align-items:center;justify-content:space-between;height:68px;color:#F1EEE3}
+.logo{font:700 1.85rem var(--d);text-decoration:none;display:flex;align-items:center;gap:.6rem}
+.logo b{display:grid;place-items:center;width:38px;height:38px;border:1.5px solid var(--mint);border-radius:9px;color:var(--mint);font-size:.95rem}
+nav ul{display:flex;gap:.3rem;list-style:none;padding:0}
+nav a.l{display:block;padding:.5rem .8rem;font-size:.9rem;text-decoration:none;border-radius:8px;opacity:.8;position:relative}
+nav a.l:hover{opacity:1}nav a.l.on{opacity:1;color:var(--mint)}
+nav a.l.on::after{content:"";position:absolute;left:.8rem;right:.8rem;bottom:2px;height:2px;background:var(--mint)}
+.avail{font:500 .75rem var(--m);display:flex;align-items:center;gap:.5rem;text-decoration:none;color:#F1EEE3;padding:.5rem .8rem;border:1px solid rgba(241,238,227,.25);border-radius:8px}
+.avail i{width:7px;height:7px;border-radius:50%;background:var(--mint)}
+.menu{display:none;background:none;border:1px solid rgba(241,238,227,.3);color:#F1EEE3;width:46px;height:46px;border-radius:10px;font:500 .8rem var(--m);cursor:pointer}
+#prog{position:absolute;left:0;bottom:-1px;height:2px;width:0;background:var(--mint)}
+/* hero */
+.hero{background:var(--graphite);color:#F1EEE3;padding:7.5rem 0 0;--mut:#a9b5ad;position:relative}
+.hero .grid{display:grid;grid-template-columns:1.05fr 1fr;gap:3rem;align-items:center;padding-bottom:5rem}
+.hero h1{font-size:clamp(2.5rem,6.2vw,5.2rem);margin:1rem 0 1.4rem}
+.hero h1 em{font-style:normal;color:var(--mint)}
+.hero p.lead{max-width:46ch;color:#cfd6cf;margin-bottom:2rem}
+.acts{display:flex;flex-wrap:wrap;gap:.8rem;margin-bottom:2.2rem}
+.facts{display:flex;flex-wrap:wrap;gap:.5rem}.facts span{border:1px solid rgba(241,238,227,.2);padding:.3rem .65rem;border-radius:6px}
+.vis{background:var(--char);border:1px solid rgba(241,238,227,.14);border-radius:14px;padding:1rem}
+.vis .cap{display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap;padding:.2rem .3rem .8rem}
+.flow{stroke-dasharray:6 8;animation:dash 1.4s linear infinite}
+@keyframes dash{to{stroke-dashoffset:-14}}
+.edge{height:72px;background:linear-gradient(var(--graphite) 50%,var(--bg) 50%)}
+.edge svg{display:block;width:100%;height:100%}
+canvas#trail{position:fixed;inset:0;pointer-events:none;z-index:60}
+/* about */
+.about{display:grid;grid-template-columns:1.1fr .9fr;gap:4rem;align-items:start}
+.about p+p{margin-top:1rem}.about p{max-width:60ch}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:1.4rem}
+.panel dl{display:grid;grid-template-columns:auto 1fr;gap:.6rem 1.2rem;margin-top:1rem}
+.panel dt{font:500 .78rem var(--m);color:var(--mut)}
+.loop{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-top:1.3rem;font:500 .8rem var(--m)}
+.loop span{padding:.35rem .6rem;border-radius:6px;background:var(--jade);color:#fff}.loop i{font-style:normal;color:var(--mut)}
+/* skills */
+.skills{background:var(--sage);--bg:var(--sage);--chip:var(--white)}
+@media(prefers-color-scheme:dark){.skills{background:#1b231f}}
+.tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1.5rem}
+.tabs button{min-height:44px;padding:.5rem 1rem;border-radius:999px;border:1.5px solid var(--jade);background:transparent;color:var(--tx);font:500 .92rem var(--b);cursor:pointer;transition:background .2s,color .2s}
+.tabs button:hover{background:rgba(36,89,74,.12)}
+.tabs button[aria-selected=true]{background:var(--jade);color:#fff}
+.sk{display:grid;grid-template-columns:1.2fr .8fr;gap:2rem;align-items:start}
+.pane{background:var(--card);border-radius:12px;padding:1.6rem;border:1px solid var(--line);min-height:210px}
+.pane .chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}.pane .chip{background:var(--sage);color:var(--text);font-size:.85rem;padding:.4rem .75rem}
+.stack{display:grid;gap:.4rem}.stack div{padding:.8rem 1rem;border-radius:8px;font:500 .82rem var(--m);background:var(--card);border:1px solid var(--line);display:flex;justify-content:space-between}
+.stack div.on{background:var(--jade);color:#fff;border-color:var(--jade)}
+/* projects */
+.pgrid{display:grid;grid-template-columns:repeat(12,1fr);gap:1.4rem;margin-top:2.5rem}
+.proj{border-radius:14px;padding:clamp(1.3rem,3vw,2.2rem);background:var(--card);border:1px solid var(--line);color:var(--tx);overflow:hidden}
+.proj.dk{background:var(--graphite);color:#F1EEE3;--mut:#a9b5ad;--line:rgba(241,238,227,.18);--acc:var(--mint)}
+.proj.sg{background:var(--sage);color:var(--text);--mut:#4a564e;--line:rgba(37,43,39,.2);--acc:var(--jade)}
+.proj.sg .chip,.proj .chip{background:rgba(127,150,135,.22);color:inherit}
+.c12{grid-column:span 12}.c7{grid-column:span 7}.c5{grid-column:span 5}.c4{grid-column:span 4}
+.proj.feat{display:grid;grid-template-columns:.9fr 1.1fr;gap:2.4rem;align-items:center}
+.proj h3{margin:.8rem 0 .7rem}.proj p{max-width:56ch;font-size:1rem}
+.meta{display:flex;flex-wrap:wrap;gap:.5rem;align-items:center}
+.tags{display:flex;flex-wrap:wrap;gap:.4rem;margin:1rem 0}
+.plink{display:inline-flex;align-items:center;min-height:44px;font-weight:600;color:var(--acc);text-decoration:underline;text-underline-offset:4px}
+.plink.off{color:var(--mut);text-decoration:none;font:500 .82rem var(--m)}
+details{margin-top:.8rem;border-top:1px solid var(--line);padding-top:.7rem}
+summary{cursor:pointer;min-height:44px;display:flex;align-items:center;font:500 .85rem var(--m);color:var(--acc)}
+details ul{padding-left:1.1rem;margin:.4rem 0 .6rem;font-size:.95rem}details li{margin-bottom:.35rem}
+.diagram{width:100%;height:auto;display:block}
+.diagram .node{transition:transform .25s var(--ease);transform-box:fill-box;transform-origin:center}
+.proj:hover .diagram .node{transform:translateY(-3px)}
+.more{margin-top:1.4rem}
+.more .proj{padding:1.4rem}
+/* research */
+.paper{display:grid;grid-template-columns:1fr 1.1fr;gap:3.5rem;align-items:center}
+.doc{background:var(--white);color:var(--text);border:1px solid var(--line);border-radius:6px;padding:2rem;box-shadow:8px 8px 0 var(--sage);font-family:Georgia,serif}
+.doc h3{font:700 1.15rem Georgia,serif;letter-spacing:0;margin:.4rem 0 1rem}
+.doc .ln{height:6px;background:#d9ddd6;margin:.5rem 0;border-radius:3px}
+.bib{display:grid;grid-template-columns:auto 1fr;gap:.5rem 1.2rem;margin-top:1.4rem;font-size:.95rem}.bib dt{font:500 .78rem var(--m);color:var(--mut);padding-top:.15rem}
+/* contact */
+.contact h2{font-size:clamp(2.4rem,7vw,5.6rem);max-width:14ch}
+.links{display:grid;gap:.4rem;margin-top:2rem;max-width:560px}
+.links a{display:flex;justify-content:space-between;gap:1rem;padding:1rem 0;min-height:56px;border-bottom:1px solid var(--line);text-decoration:none;font:500 1.1rem var(--d);transition:padding .25s var(--ease),color .2s}
+.links a:hover{padding-left:.8rem;color:var(--mint)}.links a span{font:400 .8rem var(--m);color:var(--mut);align-self:center}
+footer{background:var(--char);color:#a9b5ad;padding:1.6rem 0 calc(1.6rem + env(safe-area-inset-bottom,0px))}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:.6rem}
+.rv{opacity:1}.js .rv{opacity:0;transform:translateY(18px);transition:opacity .7s var(--ease),transform .7s var(--ease)}.js .rv.in{opacity:1;transform:none}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}.js .rv{opacity:1;transform:none}}
+@media(max-width:900px){
+.hero .grid,.about,.sk,.paper,.proj.feat{grid-template-columns:1fr}
+.c7,.c5,.c4{grid-column:span 12}.about{gap:2.5rem}.paper{gap:2.5rem}
+.menu{display:block}.avail{display:none}
+nav ul{display:none;position:absolute;top:100%;left:0;right:0;flex-direction:column;background:var(--char);padding:.6rem 1.25rem 1rem;border-bottom:1px solid rgba(241,238,227,.14)}
+nav ul.open{display:flex}nav a.l{padding:.9rem .4rem;min-height:48px}nav a.l.on::after{left:.4rem;right:auto;width:30px}
+header:has(nav ul.open){background:var(--char)}}
+
+/* v2 */
+.hero,.dark{background-image:linear-gradient(rgba(155,245,181,.055) 1px,transparent 1px),linear-gradient(90deg,rgba(155,245,181,.055) 1px,transparent 1px);background-size:44px 44px}
+.ic{width:1.1em;height:1.1em;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none;margin-right:.45rem;vertical-align:-.15em}
+.plink .ic{margin:0 0 0 .4rem;transition:transform .2s}.plink:hover .ic,.btn:hover .ic{transform:translate(2px,-2px)}
+.links .t{font:inherit;display:flex;align-items:center}
+.vis.iso{background:none;border:0;padding:0}.iso svg{overflow:visible}
+@keyframes fl{50%{transform:translateY(-9px)}}.fl{animation:fl 6s ease-in-out infinite}.fl2{animation-delay:-2s}.fl3{animation-delay:-4s}
+.js .rv.l{transform:translateX(-52px)}.js .rv.r{transform:translateX(52px)}.js .rv.l.in,.js .rv.r.in{transform:none}
+.case{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(1.4rem,4vw,3.2rem);align-items:center;grid-column:span 12;padding:clamp(1rem,2.5vw,1.8rem)}
+.case.flip .shot{order:2}
+.shot{position:relative;margin:0;padding:0 14px 14px 0}
+.shot::before{content:"";position:absolute;inset:14px 0 0 14px;border:1.5px solid var(--mint);border-radius:16px;opacity:.55}
+.proj.sg .shot::before{border-color:var(--jade)}
+.case.flip .shot{padding:0 0 14px 14px}.case.flip .shot::before{inset:14px 14px 0 0}
+.frame{position:relative;border-radius:14px;overflow:hidden;background:#151B18;border:1px solid rgba(155,245,181,.3);box-shadow:0 24px 40px -22px rgba(0,0,0,.55);aspect-ratio:4/3}
+.frame svg{display:block;width:100%;height:100%;transition:transform .7s var(--ease)}
+.case:hover .frame svg,.case:focus-within .frame svg{transform:scale(1.06)}
+.badge{position:absolute;top:14px;left:14px;font:500 .72rem var(--m);background:var(--graphite);color:var(--mint);padding:.3rem .6rem;border-radius:6px;border:1px solid rgba(155,245,181,.4)}
+.case.flip .badge{left:auto;right:14px;top:14px}
+.shot figcaption{margin-top:.6rem;font-size:.72rem}
+.js .case .info>*{opacity:0;transform:translateY(14px);transition:opacity .6s var(--ease),transform .6s var(--ease)}
+.case.in .info>*{opacity:1;transform:none}
+.case.in .info>:nth-child(2){transition-delay:.12s}.case.in .info>:nth-child(3){transition-delay:.22s}.case.in .info>:nth-child(4){transition-delay:.32s}.case.in .info>:nth-child(n+5){transition-delay:.42s}
+.pill{display:inline-flex;align-items:center;gap:.5rem;font:500 .8rem var(--m);padding:.45rem .8rem;border-radius:999px;background:var(--jade);color:#fff;margin-bottom:1rem}.pill i{width:8px;height:8px;border-radius:50%;background:var(--mint)}
+#research{background-image:linear-gradient(var(--line) 1px,transparent 1px);background-size:100% 36px;background-color:var(--bg)}
+.doc{transition:transform .4s var(--ease)}.doc:hover{transform:rotate(-1deg) translateY(-4px)}
+@media(max-width:900px){.case{grid-template-columns:1fr}.case.flip .shot{order:0}.shot,.case.flip .shot{padding:0 10px 10px 0}.case.flip .shot::before{inset:10px 0 0 10px}.case.flip .badge{left:14px;right:auto}}
+@media(prefers-reduced-motion:reduce){.js .case .info>*{opacity:1;transform:none}.fl{animation:none}}
+
+/* cv + hero buttons */
+.hero .btn{background:var(--mint);color:var(--char);border-color:var(--mint)}.hero .btn:hover{background:var(--butter);border-color:var(--butter);color:var(--char)}
+.hero .btn.ghost{background:rgba(241,238,227,.08);color:#F1EEE3;border-color:rgba(241,238,227,.55)}
+.hero .btn.ghost:hover{background:rgba(241,238,227,.16);border-color:var(--mint);color:var(--mint)}
+.cvgrp{display:inline-flex}.cvgrp .btn:first-child{border-radius:999px 0 0 999px;border-right-width:0}.cvgrp .btn:last-child{border-radius:0 999px 999px 0;padding-inline:1rem}
+.cvgrp .btn.ghost{border-color:var(--mint)}.hero .cvgrp .btn.ghost{color:var(--mint)}
+.vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="i-gh" viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.4 3.4 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.4 5.4 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.4 13.4 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.4 5.4 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.4 3.4 0 0 0 9 18.13V22"/></symbol><symbol id="i-ext" viewBox="0 0 24 24"><path d="M7 17 17 7M8 7h9v9"/></symbol><symbol id="i-mail" viewBox="0 0 24 24"><path d="M4 6h16v12H4zM4 7l8 6 8-6"/></symbol><symbol id="i-doc" viewBox="0 0 24 24"><path d="M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7"/></symbol><symbol id="i-dn" viewBox="0 0 24 24"><path d="M12 5v10m-5-4 5 5 5-5M5 19h14"/></symbol></svg>
+<header id="top"><div class="wrap bar">
+<a class="logo" href="#hero" aria-label="Mushfiqa Shaikh, home"><span>Mushfiqa Shaikh</span></a>
+<nav aria-label="Primary"><ul id="nav">
+<li><a class="l" href="#about">About</a></li><li><a class="l" href="#skills">Skills</a></li><li><a class="l" href="#projects">Projects</a></li><li><a class="l" href="#research">Research</a></li><li><a class="l" href="#contact">Contact</a></li></ul></nav>
+<a class="avail" href="#contact"><i></i>Get in touch</a>
+<button class="menu" id="menu" aria-expanded="false" aria-controls="nav" aria-label="Toggle menu">MENU</button>
+</div><div id="prog" aria-hidden="true"></div></header>
+
+<main>
+<section class="hero" id="hero" style="padding-bottom:0">
+<div class="wrap grid">
+<div>
+<p class="mono" style="color:var(--mint)">B.Tech CSE (IoT) · Parul Institute of Engineering and Technology</p>
+<h1>I build at the intersection of <em>code</em>, circuits, and connected systems.</h1>
+<p class="lead">Computer Science &amp; Engineering student focused on embedded systems, IoT, firmware, and hardware-software integration.</p>
+<div class="acts">
+  <a class="btn" href="#projects">Explore projects</a>
+  <a class="btn ghost" href="https://github.com/mushfiqa05" target="_blank" rel="noopener">View GitHub</a>
+
+  <!-- CV Section -->
+  
+
+  <!-- Resume Section -->
+  <span class="cvgrp">
+    <a class="btn ghost" id="resumeview" href="D:\Mushfiqa\Resumes\Portfolio\Mushfiqa_Shaikh_CV.pdf" target="_blank" rel="noopener">
+      <svg class="ic" aria-hidden="true"><use href="#i-doc"/></svg>View Resume
+    </a>
+    <a class="btn ghost" id="resumedl" href="D:\Mushfiqa\Resumes\Portfolio\Mushfiqa_Shaikh_CV.pdf" download="Mushfiqa_Shaikh_Resume.pdf" aria-label="Download Resume as PDF">
+      <svg class="ic" style="margin:0" aria-hidden="true"><use href="#i-dn"/></svg><span class="vh">Download</span>
+    </a>
+  </span>
+
+  
+</div>
+
+<div class="facts mono"><span>Computer Science &amp; Engineering</span><span>Embedded / IoT</span><span>Focus: sensors → cloud → dashboards</span></div>
+</div>
+<div class="vis iso rv r">
+<svg viewBox="0 0 520 470" class="diagram" role="img" aria-label="Layered isometric illustration of an IoT system: devices and firmware at the base, then edge computing, cloud services, and a web interface on top, linked by animated data paths." font-family="IBM Plex Mono" font-size="11">
+<defs><g id="p"><polygon points="-150,0 0,70 0,86 -150,16" fill="var(--pl)"/><polygon points="150,0 0,70 0,86 150,16" fill="var(--pr)"/><polygon points="0,-70 150,0 0,70 -150,0" fill="var(--pf)" stroke="#9BF5B5" stroke-opacity=".7"/><path d="M-90 0h40l14-8h30M20 14h50M-30 24h30l10 6" stroke="#9BF5B5" stroke-opacity=".35" fill="none"/></g></defs>
+<use href="#p" transform="translate(260,400) scale(.78)" style="--pf:#202722;--pl:#151B18;--pr:#1b231f"/><use href="#p" transform="translate(260,290) scale(.78)" style="--pf:#2a332d;--pl:#1b221e;--pr:#222a25"/><use href="#p" transform="translate(260,180) scale(.78)" style="--pf:#24594A;--pl:#1a4034;--pr:#14332a"/><use href="#p" transform="translate(260,70) scale(.78)" style="--pf:#F8F5ED;--pl:#c9d3c6;--pr:#b3beb0"/>
+<g stroke="#9BF5B5" stroke-width="1.5" fill="none"><path class="flow" d="M215 385V300M260 395V305M305 385V300"/><path class="flow" d="M215 275V190M260 285V195M305 275V190"/><path class="flow" d="M215 165V80M260 175V85M305 165V80"/></g>
+<g fill="#9BF5B5"><use href="#p" transform="translate(205,400) scale(.1)" style="--pf:#9BF5B5;--pl:#24594A;--pr:#24594A"/><use href="#p" transform="translate(260,412) scale(.1)" style="--pf:#F2D77B;--pl:#24594A;--pr:#24594A"/><use href="#p" transform="translate(315,400) scale(.1)" style="--pf:#E98B72;--pl:#24594A;--pr:#24594A"/><use href="#p" transform="translate(260,290) scale(.17)" style="--pf:#151B18;--pl:#0d110f;--pr:#0d110f"/></g>
+<g transform="translate(212,28)"><g class="fl fl2"><rect width="96" height="50" rx="6" fill="#FFFEFA" stroke="#24594A"/><rect x="8" y="8" width="40" height="5" rx="2" fill="#24594A"/><rect x="8" y="20" width="14" height="22" fill="#9BF5B5"/><rect x="26" y="28" width="14" height="14" fill="#F2D77B"/><rect x="44" y="24" width="14" height="18" fill="#E98B72"/><rect x="66" y="18" width="22" height="24" rx="3" fill="none" stroke="#24594A" stroke-dasharray="3 3"/></g></g>
+<g transform="translate(8,372)"><g class="fl"><rect width="86" height="26" rx="6" fill="#151B18" stroke="#9BF5B5" stroke-opacity=".6"/><text x="43.0" y="17" fill="#F1EEE3" text-anchor="middle">Sensors</text></g></g><g transform="translate(430,384)"><g class="fl fl2"><rect width="82" height="26" rx="6" fill="#151B18" stroke="#9BF5B5" stroke-opacity=".6"/><text x="41.0" y="17" fill="#F1EEE3" text-anchor="middle">Firmware</text></g></g><g transform="translate(8,262)"><g class="fl fl3"><rect width="100" height="26" rx="6" fill="#151B18" stroke="#9BF5B5" stroke-opacity=".6"/><text x="50.0" y="17" fill="#F1EEE3" text-anchor="middle">Edge compute</text></g></g><g transform="translate(420,262)"><g class="fl"><rect width="92" height="26" rx="6" fill="#151B18" stroke="#9BF5B5" stroke-opacity=".6"/><text x="46.0" y="17" fill="#F1EEE3" text-anchor="middle">Protocols</text></g></g><g transform="translate(8,150)"><g class="fl fl2"><rect width="88" height="26" rx="6" fill="#151B18" stroke="#9BF5B5" stroke-opacity=".6"/><text x="44.0" y="17" fill="#F1EEE3" text-anchor="middle">Cloud · DB</text></g></g><g transform="translate(440,150)"><g class="fl fl3"><rect width="72" height="26" rx="6" fill="#151B18" stroke="#9BF5B5" stroke-opacity=".6"/><text x="36.0" y="17" fill="#F1EEE3" text-anchor="middle">APIs</text></g></g><g transform="translate(400,36)"><g class="fl"><rect width="112" height="26" rx="6" fill="#151B18" stroke="#9BF5B5" stroke-opacity=".6"/><text x="56.0" y="17" fill="#F1EEE3" text-anchor="middle">Web interface</text></g></g>
+</svg>
+<div class="cap mono" style="padding:.8rem .3rem 0"><span>DEVICE → FIRMWARE → EDGE → CLOUD → UI</span><span style="color:var(--butter)">CONCEPT ILLUSTRATION</span></div>
+</div></div>
+<div class="edge" aria-hidden="true"><svg viewBox="0 0 1200 72" preserveAspectRatio="none"><path d="M0 40H300l16-16h120l16 16h300l16 16h150l16-16H1200V72H0Z" fill="#F8F5ED"/><path d="M0 40H300l16-16h120l16 16h300l16 16h150l16-16H1200" fill="none" stroke="#9BF5B5" stroke-width="1.5"/></svg></div>
+</section>
+
+<section id="about"><div class="wrap about">
+<div class="rv"><p class="mono">ABOUT · HOW I BUILD</p>
+<h2>Devices that explain themselves to the people using them.</h2>
+<p>I’m a B.Tech student in Computer Science and Engineering (IoT), 2023–2027, at Parul Institute of Engineering and Technology. My projects start with a physical signal and follow it all the way to a screen: reading sensors on a microcontroller, sending the data over Wi-Fi, storing it in a cloud database, and showing it in a web interface.</p>
+<p>I like the unglamorous parts of that chain: wiring and calibrating sensors, handling serial and wireless communication, and working out where a prototype’s limits are by testing it, then writing those limits down.</p></div>
+<aside class="panel rv" aria-label="Technical profile"><span class="mono">TECHNICAL PROFILE</span>
+<dl><dt>Degree</dt><dd>B.Tech CSE (IoT), 2023–2027</dd><dt>CGPA</dt><dd>8.05 / 10</dd><dt>Focus</dt><dd>Embedded systems, firmware, IoT, sensor integration</dd><dt>Stack</dt><dd>ESP32 · C++ · Python · Firebase · Web</dd></dl>
+<div class="loop" aria-label="Workflow"><span>Sense</span><i>→</i><span>Process</span><i>→</i><span>Communicate</span><i>→</i><span>Visualize</span></div></aside>
+</div></section>
+
+<section id="skills" class="skills"><div class="wrap">
+<p class="mono">CAPABILITIES</p><h2>From pin headers to browser tabs.</h2>
+<div class="sk"><div>
+<div class="tabs" role="tablist" aria-label="Skill categories" id="tabs"></div>
+<div class="pane" id="pane" role="tabpanel" aria-live="polite"></div></div>
+<div class="stack" aria-label="Hardware-to-cloud layers" id="stack"></div></div>
+</div></section>
+
+<section id="projects" class="dark"><div class="wrap">
+<p class="mono">SELECTED WORK</p><h2>Four systems, at four different stages.</h2>
+<p class="mono" style="max-width:60ch">Statuses are stated as they are: completed hardware, prototypes and planned work are labeled separately.</p>
+<div class="pgrid">
+<article class="proj case rv l" style="background:var(--char)"><figure class="shot"><div class="frame"><svg viewBox="0 0 480 360" role="img" aria-label="Concept illustration: sensor probes in a water beaker wired to an ESP32 board and a dashboard panel" font-family="IBM Plex Mono" font-size="11">
+<path d="M70 130V280q0 18 18 18h84q18 0 18-18V130" fill="none" stroke="#a9b5ad" stroke-width="3"/><path d="M73 190h114v90q0 15-15 15H88q-15 0-15-15Z" fill="#24594A" opacity=".75"/><path d="M73 190q14-8 28 0t28 0 28 0 28 0" fill="none" stroke="#9BF5B5" stroke-width="2"/>
+<g fill="#a9b5ad"><rect x="100" y="70" width="8" height="170" rx="3"/><rect x="128" y="70" width="8" height="150" rx="3" fill="#F2D77B"/><rect x="156" y="70" width="8" height="175" rx="3" fill="#E98B72"/></g>
+<g stroke="#9BF5B5" stroke-width="1.5" fill="none"><path class="flow" d="M104 70V45H250V200"/><path class="flow" d="M132 70V55H275V200"/><path class="flow" d="M160 70V65H300V200"/></g>
+<rect x="230" y="200" width="130" height="80" rx="8" fill="#24594A" stroke="#9BF5B5"/><rect x="255" y="218" width="50" height="44" rx="3" fill="#151B18" stroke="#F2D77B"/><text x="280" y="244" fill="#F2D77B" text-anchor="middle">MCU</text><g stroke="#9BF5B5" stroke-width="3"><path d="M238 212h8M238 226h8M238 240h8M238 254h8M344 212h8M344 226h8M344 240h8M344 254h8"/></g>
+<path class="flow" d="M360 240H400V170" stroke="#9BF5B5" stroke-width="1.5" fill="none"/>
+<rect x="340" y="90" width="120" height="80" rx="6" fill="#F8F5ED"/><rect x="352" y="102" width="50" height="6" rx="2" fill="#24594A"/><g><rect x="352" y="132" width="14" height="28" fill="#9BF5B5"/><rect x="372" y="142" width="14" height="18" fill="#F2D77B"/><rect x="392" y="122" width="14" height="38" fill="#24594A"/><rect x="412" y="136" width="14" height="24" fill="#E98B72"/></g>
+<text x="400" y="188" fill="#a9b5ad" text-anchor="middle">dashboard · illustrative</text></svg></div><span class="badge fl">Concept illustration</span><figcaption class="mono">Illustration of the concept, not a photo of the actual hardware.</figcaption></figure><div class="info"><div class="meta"><span class="status s-done">HARDWARE COMPLETE</span><span class="mono">ESP32 · FIREBASE</span></div>
+<h3>Smart Water Quality Monitoring System in Real Time</h3>
+<p>An ESP32 reads pH, TDS, turbidity, temperature, and tank level, then sends the readings to Firebase Realtime Database over Wi-Fi. A web dashboard shows them, including a custom rule-based Water Quality Score (not a certified WQI).</p>
+<div class="tags"><span class="chip">ESP32</span><span class="chip">Embedded C++</span><span class="chip">Firebase RTDB</span><span class="chip">HTML/CSS/JS</span><span class="chip">Wi-Fi</span></div>
+<details><summary>Built vs. not claimed</summary><ul><li>Built: multi-sensor acquisition and Wi-Fi upload to Firebase.</li><li>Dashboard and deployment details: to be confirmed; no live URL yet.</li><li>Not claimed: machine learning, predictive maintenance, certified WQI, or measured accuracy.</li></ul></details>
+<a class="plink" href="https://github.com/mushfiqa05/Smart-Water-Quality-Monitoring-System-In-Real-Time" target="_blank" rel="noopener">View repository</a></div></article>
+<article class="proj sg case flip rv r"><figure class="shot"><div class="frame"><svg viewBox="0 0 480 360" role="img" aria-label="Concept illustration: a hand wearing a glove with flex sensors and a wrist-mounted board that outputs text and speech" font-family="IBM Plex Mono" font-size="11">
+<g fill="#DCE8D9" stroke="#24594A" stroke-width="2"><rect x="130" y="90" width="26" height="100" rx="13"/><rect x="159" y="62" width="26" height="128" rx="13"/><rect x="188" y="76" width="26" height="114" rx="13"/><rect x="217" y="104" width="26" height="86" rx="13"/><rect x="118" y="170" width="140" height="120" rx="28"/><rect x="236" y="180" width="26" height="80" rx="13" transform="rotate(-40 249 220)"/></g>
+<g stroke="#24594A" stroke-width="4" stroke-linecap="round" stroke-dasharray="2 7"><path d="M143 110v150M172 84v176M201 98v162M230 124v140"/></g>
+<rect x="124" y="290" width="128" height="46" rx="8" fill="#24594A" stroke="#9BF5B5"/><rect x="150" y="299" width="48" height="28" rx="3" fill="#151B18" stroke="#F2D77B"/><circle cx="224" cy="313" r="5" fill="#9BF5B5"/>
+<path class="flow" d="M252 313H330V130" stroke="#9BF5B5" stroke-width="1.5" fill="none"/>
+<g class="fl"><rect x="300" y="70" width="150" height="60" rx="14" fill="#F8F5ED"/><text x="375" y="96" fill="#252B27" text-anchor="middle">text output</text><path d="M330 112h24M362 106v12M372 102v20M382 108v8M392 104v16" stroke="#24594A" stroke-width="3" stroke-linecap="round"/></g>
+<text x="375" y="170" fill="#a9b5ad" text-anchor="middle">sensor → MCU → text / speech</text></svg></div><span class="badge fl">Concept illustration</span><figcaption class="mono">Illustration of the concept, not a photo of the actual hardware.</figcaption></figure><div class="info"><div class="meta"><span class="status s-proto">PROTOTYPE</span></div>
+<h3>Gesture-to-Text/Speech Wearable</h3>
+<p>A wearable prototype exploring how sensor input and microcontroller communication can become text and speech output.</p>
+<div class="tags"><span class="chip">Wearable</span><span class="chip">Sensor input</span><span class="chip">MCU</span></div>
+<details><summary>Implementation notes</summary><ul><li>Exact sensors, board and output path: confirm against the repository before publishing.</li><li>No gesture count, accuracy, or accessibility outcomes are claimed.</li></ul></details>
+<a class="plink" href="https://github.com/mushfiqa05/Hand-Gesture-to-voice-Text-Wearable" target="_blank" rel="noopener">View repository</a></div></article>
+<article class="proj c12 rv l" style="background:var(--char);display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:center">
+<div><div class="meta"><span class="status s-proto">EDUCATIONAL PROTOTYPE</span></div><h3>ResQBeat Heart Monitoring Demo</h3>
+<p>Explores heart-rate data acquisition, serial communication, a Python bridge, and Firebase-based presentation. Not a medically validated device.</p>
+<div class="tags"><span class="chip">Serial</span><span class="chip">Python</span><span class="chip">Firebase</span></div>
+<a class="plink" href="https://github.com/mushfiqa05/ResQBeat---HeartRate-Detection-System" target="_blank" rel="noopener">View repository</a></div>
+<svg class="diagram" viewBox="0 0 300 80" role="img" aria-label="Illustrative waveform, not recorded data"><path class="flow" d="M0 40H60l8-24 10 48 10-40 8 16H150l8-22 10 44 10-36 8 14H300" fill="none" stroke="#9BF5B5" stroke-width="2"/><text x="296" y="74" fill="#a9b5ad" font-family="IBM Plex Mono" font-size="10" text-anchor="end">ILLUSTRATIVE WAVEFORM</text></svg></article>
+<article class="proj dk case rv l" style="background:var(--char);border-color:rgba(155,245,181,.35)"><figure class="shot"><div class="frame"><svg viewBox="0 0 480 360" role="img" aria-label="Concept illustration: an industrial filtration line with planned sensor points, an edge device, and a planned digital-twin panel" font-family="IBM Plex Mono" font-size="11">
+<rect x="20" y="170" width="70" height="90" rx="6" fill="#202722" stroke="#a9b5ad"/><path d="M26 205h58v50H26Z" fill="#24594A" opacity=".7"/>
+<g fill="#202722" stroke="#a9b5ad" stroke-width="1.5"><rect x="140" y="140" width="62" height="130" rx="8"/><rect x="230" y="140" width="62" height="130" rx="8"/><rect x="320" y="140" width="62" height="130" rx="8"/></g>
+<g fill="#a9b5ad" opacity=".55"><path d="M148 170h46M148 185h46M148 200h46M148 215h46M148 230h46"/><path d="M238 170h46M238 190h46M238 210h46M238 230h46" stroke="#a9b5ad" stroke-width="2"/></g><g stroke="#2d3a33" stroke-width="3"><path d="M148 170h46M148 185h46M148 200h46M148 215h46M148 230h46M238 170h46M238 190h46M238 210h46M238 230h46M328 170h46M328 195h46M328 220h46"/></g>
+<path class="flow" d="M90 250H110V280H171V270M202 280H261V270M292 280H351V270M382 250H440" stroke="#E98B72" stroke-width="2" fill="none"/>
+<circle cx="110" cy="250" r="9" fill="#151B18" stroke="#F2D77B" stroke-dasharray="3 3"/><path d="M105 245l10 10M115 245l-10 10" stroke="#F2D77B"/>
+<g fill="#151B18" stroke="#9BF5B5" stroke-dasharray="3 3"><circle cx="116" cy="280" r="8"/><circle cx="217" cy="280" r="8"/><circle cx="337" cy="280" r="8"/></g>
+<path class="flow" d="M171 140V100H250M261 140V100M351 140V100H400" stroke="#9BF5B5" stroke-width="1.5" fill="none"/>
+<rect x="215" y="70" width="90" height="34" rx="6" fill="#24594A" stroke="#9BF5B5"/><text x="260" y="92" fill="#fff" text-anchor="middle">edge device</text>
+<rect x="340" y="30" width="125" height="70" rx="6" fill="none" stroke="#F2D77B" stroke-dasharray="4 4"/><text x="402" y="60" fill="#F2D77B" text-anchor="middle">CONCEPT / PLANNED</text><text x="402" y="80" fill="#a9b5ad" text-anchor="middle">digital-twin panel</text>
+<text x="240" y="330" fill="#a9b5ad" text-anchor="middle">filter stages · planned sensor points</text></svg></div><span class="badge fl">Concept · Planned</span><figcaption class="mono">Concept illustration. No sensor readings or twin are running yet.</figcaption></figure><div class="info"><div class="meta"><span class="status s-done" style="color:var(--butter)">IN PROGRESS · UNDER DEVELOPMENT</span></div>
+<h3>Industrial Effluent Smart Filtering Automation &amp; Digital Twin Platform</h3>
+<p>An ESP32-based effluent monitoring and smart-filtering prototype that will combine pH, TDS, turbidity and temperature sensing, cloud-synced device state, a digital-twin-style dashboard, and algorithmic analysis of possible filter degradation.</p>
+<div class="tags"><span class="chip">ESP32</span><span class="chip">Firebase desired/reported state</span><span class="chip">Python analysis</span><span class="chip">Web dashboard</span></div>
+<details open><summary>Status breakdown</summary><ul><li><b>Done:</b> hardware acquired.</li><li><b>Pending:</b> implementation and validation.</li><li><b>Planned, not operational:</b> sensing pipeline, cloud state, digital-twin dashboard, algorithmic degradation analysis, and later valve experiments.</li><li>Any actuation needs local failsafe logic, manual override and electrical protection; the dashboard is not a safety controller.</li></ul></details></div></article>
+</div>
+
+<div class="pgrid more" style="margin-top:1.4rem"><article class="proj c12 rv" style="background:var(--char)">
+<span class="mono">MORE EXPERIMENTS</span><h3 style="font-size:1.25rem">Smart Mirror–enabled Home Automation</h3>
+<p>A smart-mirror and home-automation experiment. Details to be added once the repository documentation is confirmed.</p>
+<a class="plink" href="https://github.com/mushfiqa05/Samrt-Mirror-enabled-Home-Automation" target="_blank" rel="noopener">View repository</a></article></div>
+</div></section>
+
+<section id="research"><div class="wrap paper">
+<div class="rv"><p class="mono">RESEARCH</p><h2>Writing up the water monitor.</h2>
+<p style="max-width:52ch"><span class="pill"><i></i>Accepted · Awaiting Publication</span><br>The research paper on the Smart Water Quality Monitoring System has been accepted at ICCSDI and is awaiting publication. A DOI, publication date and link will be added once they are available.</p>
+<dl class="bib"><dt>Venue</dt><dd>International Conference on Computational Science and Data Intelligence (ICCSDI)</dd><dt>ISBN</dt><dd>978-81-999473-7-5</dd><dt>Publisher listed</dt><dd>SYBGEN Learning</dd><dt>Status</dt><dd>Accepted · Awaiting Publication</dd></dl></div>
+<div class="doc rv" aria-hidden="true"><span class="mono">ICCSDI · ACCEPTED · AWAITING PUBLICATION</span><h3>Real-time water quality monitoring with an ESP32 and Firebase</h3>
+<div class="ln"></div><div class="ln" style="width:92%"></div><div class="ln" style="width:96%"></div><div class="ln" style="width:60%"></div>
+<svg viewBox="0 0 300 70" style="margin-top:1rem"><path d="M0 60C50 60 60 20 110 30S170 60 220 20 280 30 300 10" fill="none" stroke="#24594A" stroke-width="2"/></svg><div class="mono">FIG. (illustrative)</div></div>
+</div></section>
+
+<section id="contact" class="dark contact"><div class="wrap rv">
+<p class="mono">CONTACT</p><h2>Have a sensor, a signal, or a system to think through?</h2>
+<p style="max-width:50ch;color:#cfd6cf">I’m open to conversations about embedded and IoT work. Email is the quickest way to reach me.</p>
+<div class="links"><a href="mailto:mushfiqa05@gmail.com">Email<span>mushfiqa05@gmail.com</span></a><a href="https://github.com/mushfiqa05" target="_blank" rel="noopener">GitHub<span>github.com/mushfiqa05</span></a><a href="https://linkedin.com/in/mushfiqa-shaikh" target="_blank" rel="noopener">LinkedIn<span>mushfiqa-shaikh</span></a></div>
+</div></section>
+</main>
+<footer><div class="wrap mono"><span>© 2026 Mushfiqa Shaikh</span><span>Built with ESP32-flavored curiosity</span></div></footer>
+<canvas id="trail" aria-hidden="true"></canvas>
+
+<script>
+document.documentElement.classList.add('js');
+const $=(s,c=document)=>c.querySelector(s),$$=(s,c=document)=>[...c.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+// nav
+const hd=$('#top'),prog=$('#prog'),nav=$('#nav'),mb=$('#menu');
+function sc(){const y=scrollY,h=document.documentElement.scrollHeight-innerHeight;hd.classList.toggle('solid',y>40);prog.style.width=(h>0?y/h*100:0)+'%'}
+addEventListener('scroll',sc,{passive:true});sc();
+mb.onclick=()=>{const o=nav.classList.toggle('open');mb.setAttribute('aria-expanded',o);mb.textContent=o?'CLOSE':'MENU'};
+$$('a',nav).forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('open');mb.setAttribute('aria-expanded',false);mb.textContent='MENU'}));
+addEventListener('keydown',e=>{if(e.key==='Escape'&&nav.classList.contains('open')){mb.click();mb.focus()}});
+const links=$$('a.l'),secs=links.map(a=>$(a.getAttribute('href')));
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id))}),{rootMargin:'-45% 0px -50% 0px'}).observe&&secs.forEach(s=>s&&new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)links.forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id))}),{rootMargin:'-45% 0px -50% 0px'}).observe(s));
+// reveal
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.12});
+$$('.rv').forEach((el,i)=>{el.style.transitionDelay=(i%3)*80+'ms';io.observe(el)});
+// skills
+const S={"Programming":{d:"Languages I write across firmware, scripts and the web.",i:["C","C++","Python","JavaScript"],l:0},
+"Embedded":{d:"Boards, sensors and the wiring between them.",i:["ESP32","Arduino","Raspberry Pi","Microcontrollers","Firmware development","Sensor integration","Hardware interfacing","Circuit prototyping","Sensor calibration","Serial communication"],l:0},
+"IoT":{d:"How devices report to the cloud.",i:["IoT architecture","Real-time IoT systems","Wireless communication","Firebase Realtime Database","MQTT"],l:1},
+"Protocols":{d:"Buses and network protocols.",i:["UART","I2C","SPI","HTTP/HTTPS"],l:1},
+"Cloud":{d:"Platforms that store and serve device data.",i:["Firebase","ThingSpeak"],l:2},
+"Tools":{d:"Day-to-day development tooling.",i:["Arduino IDE","Git","GitHub"],l:2},
+"Web":{d:"Interfaces for monitoring physical systems.",i:["HTML5","CSS3","JavaScript","React.js"],l:3}};
+const L=["Device · sensors & firmware","Link · protocols & wireless","Cloud · data & state","Interface · web dashboard"];
+const tabs=$('#tabs'),pane=$('#pane'),stack=$('#stack');
+stack.innerHTML=L.map(x=>`<div><span>${x.split(' · ')[0]}</span><span>${x.split(' · ')[1]}</span></div>`).join('');
+Object.keys(S).forEach((k,n)=>{const b=document.createElement('button');b.role='tab';b.textContent=k;b.id='t'+n;b.onclick=()=>pick(k);b.onkeydown=e=>{const t=$$('button',tabs),i=t.indexOf(b);if(e.key==='ArrowRight'||e.key==='ArrowLeft'){const j=(i+(e.key==='ArrowRight'?1:t.length-1))%t.length;t[j].focus();t[j].click()}};tabs.append(b)});
+function pick(k){$$('button',tabs).forEach(b=>b.setAttribute('aria-selected',b.textContent===k));pane.setAttribute('aria-labelledby','t'+Object.keys(S).indexOf(k));
+const s=S[k];pane.innerHTML=`<h3 style="font-size:1.3rem">${k}</h3><p style="margin-top:.4rem;color:var(--mut)">${s.d}</p><div class="chips">${s.i.map(x=>`<span class="chip">${x}</span>`).join('')}</div>`;
+$$('div',stack).forEach((d,i)=>d.classList.toggle('on',i===s.l))}
+pick('Embedded');
+// cv download via viewer capability, plain link otherwise
+$('#cvdl')?.addEventListener('click',async e=>{const a=e.currentTarget;if(!window.claude||false)return;
+try{const d=await claude.use('downloads');if(!d)return;e.preventDefault();const r=await fetch(a.href);await d.save({filename:'Mushfiqa_Shaikh_CV.pdf',data:await r.blob()})}catch(x){if(x&&x.code==='declined')return;location.href=a.href}});
+// icons
+const ic=n=>`<svg class="ic" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+$$('a[href^="https://github.com"]').forEach(a=>{if(!a.classList.contains('plink')&&!a.closest('.links'))a.insertAdjacentHTML('afterbegin',ic('gh'))});
+$$('.plink[href]').forEach(a=>a.insertAdjacentHTML('beforeend',ic('ext')));
+$$('.links a').forEach(a=>{const n=a.href.startsWith('mailto')?'mail':a.href.includes('github')?'gh':'ext',t=a.firstChild,b=document.createElement('b');b.className='t';b.innerHTML=ic(n)+t.textContent;t.remove();a.prepend(b)});
+// reveal directions
+$('#about .rv')?.classList.add('l');$('#about aside')?.classList.add('r');$('#research .rv')?.classList.add('l');$('#research .doc')?.classList.add('r');
+// cursor trail (fine pointers only)
+const cv=$('#trail');
+if(!reduce&&matchMedia('(pointer:fine)').matches){const c=cv.getContext('2d'),P=[],col=['#9BF5B5','#9BF5B5','#24594A','#F2D77B','#E98B72'],M=70;
+const rs=()=>{cv.width=innerWidth;cv.height=innerHeight};rs();addEventListener('resize',rs);
+let lx=-99,ly=-99;
+addEventListener('pointermove',e=>{const d=Math.hypot(e.clientX-lx,e.clientY-ly);if(d<7)return;lx=e.clientX;ly=e.clientY;
+for(let k=0;k<(d>40?3:2);k++){P.push({x:lx+(Math.random()-.5)*8,y:ly+(Math.random()-.5)*8,vx:(Math.random()-.5)*1.1,vy:-.25-Math.random()*.8,r:2.5+Math.random()*4.5,a:.55+Math.random()*.4,c:col[Math.random()*col.length|0]});if(P.length>M)P.shift()}},{passive:true});
+(function f(){c.clearRect(0,0,cv.width,cv.height);for(let i=P.length-1;i>=0;i--){const p=P[i];p.a-=.017;p.r*=.985;p.x+=p.vx;p.y+=p.vy;if(p.a<=0){P.splice(i,1);continue}
+c.globalAlpha=p.a;c.fillStyle=p.c;c.beginPath();c.arc(p.x,p.y,p.r,0,6.3);c.fill();c.globalAlpha=p.a*.8;c.lineWidth=1;c.strokeStyle='#151B18';c.stroke();c.globalAlpha=p.a*.5;c.strokeStyle='#F8F5ED';c.beginPath();c.arc(p.x,p.y,p.r+1.5,0,6.3);c.stroke()}requestAnimationFrame(f)})()}
+else cv.remove();
+</script>
+</body>
+</html>
